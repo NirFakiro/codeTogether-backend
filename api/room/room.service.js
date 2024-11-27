@@ -4,15 +4,16 @@ let roomIdCounter = 0
 export const roomService = {
   createRoom,
   getRoomById,
+  joinRoom,
   deleteRoom,
 }
 
 async function createRoom(codeId) {
   const roomId = roomIdCounter++
   const room = {
-    id: roomId,
-    codeId,
-    mentor: null,
+    id: codeId,
+    codeId: codeId,
+    isMentor: true,
     student: [],
     createdAt: Date.now(),
   }
@@ -22,6 +23,13 @@ async function createRoom(codeId) {
 
 async function getRoomById(roomId) {
   return rooms[roomId] || null
+}
+
+async function joinRoom(roomId) {
+  const room = rooms[roomId]
+
+  rooms[roomId] = room
+  return room
 }
 
 async function deleteRoom(roomId) {

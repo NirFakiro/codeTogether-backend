@@ -23,6 +23,18 @@ export async function getRoomById(req, res) {
   }
 }
 
+export async function joinRoom(req, res) {
+  const { id } = req.params
+
+  try {
+    const room = await roomService.joinRoom(id)
+    return res.json(room)
+  } catch (err) {
+    console.log('Failed to join room:', err)
+    res.status(404).json({ message: 'Failed to join room' })
+  }
+}
+
 export async function deleteRoom(req, res) {
   const { id } = req.params
   try {
