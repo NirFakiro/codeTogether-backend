@@ -1,8 +1,9 @@
 import express from 'express'
-import { getCodes } from './code.controller.js'
+import { getCodes, getSolution } from './code.controller.js'
 
 const router = express.Router()
 
 router.get('/', getCodes)
+router.get('/:id', getSolution)
 
-export { router as coodRoutes }
+export { router as coodeRoutes }

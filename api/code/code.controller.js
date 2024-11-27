@@ -6,6 +6,17 @@ export async function getCodes(req, res) {
     res.json(codes)
   } catch (err) {
     console.log('Failed to get codes:', err)
-    throw err
+    res.status(404).json({ message: 'No codes found' })
+  }
+}
+
+export async function getSolution(req, res) {
+  const { id } = req.params
+  try {
+    const solution = await codeService.getSolutionById(id)
+    res.json(solution)
+  } catch (err) {
+    console.log('Failed to get solution:', err)
+    res.status(404).json({ message: 'No solution found' })
   }
 }

@@ -3,7 +3,8 @@ import http from 'http'
 import cors from 'cors'
 import express from 'express'
 import dotenv from 'dotenv'
-import { coodRoutes } from './api/code/code.ruotes.js'
+import { coodeRoutes } from './api/code/code.ruotes.js'
+import { roomRoutes } from './api/room/room.routes.js'
 
 dotenv.config()
 const app = express()
@@ -29,7 +30,8 @@ app.get('/', (req, res) => {
   res.send('Welcome to Moveo App :)')
 })
 
-app.use('/api/code', coodRoutes)
+app.use('/api/code', coodeRoutes)
+app.use('/api/room', roomRoutes)
 
 const port = process.env.PORT || 3030
 
