@@ -5,7 +5,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 
 import { coodeRoutes } from './api/code/code.ruotes.js'
-import { roomRoutes } from './api/room/room.routes.js'
+
 import { setupSocketAPI } from './services/socket.service.js'
 
 dotenv.config()
@@ -15,7 +15,7 @@ const server = http.createServer(app)
 app.use(express.json())
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.resolve('puplic')))
+  app.use(express.static(path.resolve('public')))
 } else {
   const corsOptions = {
     origin: [
@@ -29,7 +29,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use('/api/code', coodeRoutes)
-app.use('/api/room', roomRoutes)
 
 setupSocketAPI(server)
 
