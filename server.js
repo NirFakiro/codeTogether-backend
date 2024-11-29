@@ -3,8 +3,10 @@ import http from 'http'
 import cors from 'cors'
 import express from 'express'
 import dotenv from 'dotenv'
+
 import { coodeRoutes } from './api/code/code.ruotes.js'
 import { roomRoutes } from './api/room/room.routes.js'
+import { setupSocketAPI } from './services/socket.service.js'
 
 dotenv.config()
 const app = express()
@@ -26,12 +28,10 @@ if (process.env.NODE_ENV === 'production') {
   app.use(cors(corsOptions))
 }
 
-app.get('/', (req, res) => {
-  res.send('Welcome to Moveo App :)')
-})
-
 app.use('/api/code', coodeRoutes)
 app.use('/api/room', roomRoutes)
+
+setupSocketAPI(server)
 
 const port = process.env.PORT || 3030
 

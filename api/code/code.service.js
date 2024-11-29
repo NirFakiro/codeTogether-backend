@@ -3,7 +3,7 @@ import { dbService } from '../../services/db.service.js'
 
 export const codeService = {
   query,
-  getSolutionById,
+  getCodeById,
 }
 
 const CODE_COLLECTION_NAME = 'code_blocks'
@@ -19,13 +19,13 @@ async function query() {
   }
 }
 
-async function getSolutionById(codeId) {
+async function getCodeById(codeId) {
   try {
     const collection = await dbService.getCollection(CODE_COLLECTION_NAME)
     const criteria = { _id: ObjectId.createFromHexString(codeId) }
     const currCode = await collection.findOne(criteria)
 
-    return currCode.solution
+    return currCode
   } catch (err) {
     console.log('Faild to get solution from codeId: ', codeId, err)
     throw err

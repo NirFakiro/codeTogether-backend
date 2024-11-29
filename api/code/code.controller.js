@@ -10,11 +10,11 @@ export async function getCodes(req, res) {
   }
 }
 
-export async function getSolution(req, res) {
+export async function getCodeById(req, res) {
   const { id } = req.params
   try {
-    const solution = await codeService.getSolutionById(id)
-    res.json(solution)
+    const code = await codeService.getCodeById(id)
+    res.json(code)
   } catch (err) {
     console.log('Failed to get solution:', err)
     res.status(404).json({ message: 'No solution found' })
