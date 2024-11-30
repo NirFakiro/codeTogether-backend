@@ -14,16 +14,6 @@ const server = http.createServer(app)
 
 app.use(express.json())
 
-app.use(
-  express.static(path.resolve('public'), {
-    setHeaders: function (res, path) {
-      if (path.endsWith('.js')) {
-        res.set('Content-Type', 'application/javascript')
-      }
-    },
-  })
-)
-
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.resolve('public')))
 } else {
