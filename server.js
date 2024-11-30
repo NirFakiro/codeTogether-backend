@@ -14,6 +14,16 @@ const server = http.createServer(app)
 
 app.use(express.json())
 
+app.use(
+  express.static(path.resolve('public'), {
+    setHeaders: function (res, path) {
+      if (path.endsWith('.js')) {
+        res.set('Content-Type', 'application/javascript')
+      }
+    },
+  })
+)
+
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.resolve('public')))
 } else {
@@ -30,12 +40,12 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use('/api/code', coodeRoutes)
 
+setupSocketAPI(server)
+
 app.get('/**', (req, res) => {
   console.log('GET request received')
   res.sendFile(path.resolve('public/index.html'))
 })
-
-setupSocketAPI(server)
 
 const port = process.env.PORT || 3030
 
