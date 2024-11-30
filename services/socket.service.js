@@ -69,12 +69,7 @@ export function setupSocketAPI(http) {
         gIo.to(roomId).emit('code-changed', newCode)
       })
 
-      // // Show result
-      // socket.on('show-result', (roomId, result = '') => {
-      //   const roomData = rooms.get(roomId)
-      //   roomData.currentResult = result
-      //   gIo.to(roomId).emit('display-result', result)
-      // })
+     
     })
 
     // User disconnect
