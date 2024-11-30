@@ -25,8 +25,9 @@ export function setupSocketAPI(http) {
         // If the room does not exist, create it
         roomData = {
           mentor: null,
-          students: [],
+          student: null,
           watchers: [],
+          currentCode: '',
         }
         rooms.set(roomId, roomData)
       }
@@ -35,15 +36,14 @@ export function setupSocketAPI(http) {
         // The first user is the mentor
         role = 'mentor'
         roomData.mentor = socket.id
-      } else if (roomData.students.length === 0) {
-        // The second user is the mentor.
+      } else if (!roomData.student) {
+        // The second user is the student.
         role = 'student'
-        roomData.students.push(socket.id)
+        roomData.student = socket.id
       } else {
         // Every additional user is a watcher
         role = 'watcher'
         roomData.watchers.push(socket.id)
-        console.log('watcher:', roomData.watchers)
       }
 
       socket.role = role
@@ -51,28 +51,30 @@ export function setupSocketAPI(http) {
       socket.join(roomId)
 
       // Send the role to the user
-      socket.emit('user-role', { userId: socket.id, role })
+      socket.emit('user-role', role)
 
-      // Update the watcher count
-      const watcherCount = roomData.watchers.length
-      gIo.to(roomId).emit('watcher-count', watcherCount)
+      const roomStatus = {
+        isStudentPresent: Boolean(roomData.student),
+        watcherCount: roomData.watchers.length,
+        isMentor: Boolean(roomData.mentor),
+      }
+      gIo.to(roomId).emit('room-status', roomStatus)
 
-      console.log(`Socket join-room [id: ${roomId}] `)
-    })
+      //Update code
+      socket.on('code-update', (roomId, newCode) => {
+        const roomData = rooms.get(roomId)
+        roomData.currentCode = newCode
+        console.log('UpdateCode:', newCode)
 
-    //Update code
-    socket.on('code-update', (roomId, newCode) => {
-      gIo.to(roomId).emit('code-changed', newCode)
-    })
+        gIo.to(roomId).emit('code-changed', newCode)
+      })
 
-    // Show if student opened the solution
-    socket.on('show-solution', (roomId, solution) => {
-      gIo.to(roomId).emit('display-solution', solution)
-    })
-
-    // Show result
-    socket.on('show-result', (roomId, result) => {
-      gIo.to(roomId).emit('display-solution', result)
+      // // Show result
+      // socket.on('show-result', (roomId, result = '') => {
+      //   const roomData = rooms.get(roomId)
+      //   roomData.currentResult = result
+      //   gIo.to(roomId).emit('display-result', result)
+      // })
     })
 
     // User disconnect
@@ -83,12 +85,13 @@ export function setupSocketAPI(http) {
 
       const roomData = rooms.get(roomId)
       if (!roomData) return
+
       // Update the role
       if (role === 'mentor') {
         gIo.to(roomId).emit('redirect-to-lobby')
         rooms.delete(roomId)
       } else if (role === 'student') {
-        roomData.students = roomData.students.filter((id) => id !== socket.id)
+        roomData.student = null
       } else if (role === 'watcher') {
         roomData.watchers = roomData.watchers.filter((id) => id !== socket.id)
       }
@@ -102,14 +105,16 @@ export function setupSocketAPI(http) {
         rooms.delete(roomId)
       }
 
-      // Update the watcher
-      const watcherCount = Array.isArray(roomData.watchers)
-        ? roomData.watchers.length
-        : 0
+      // Update the room status
+      const roomStatus = {
+        isStudentPresent: Boolean(roomData.student),
+        watcherCount: roomData.watchers.length,
+        isMentor: Boolean(roomData.mentor),
+      }
 
-      gIo.to(roomId).emit('watcher-count', watcherCount)
+      gIo.to(roomId).emit('room-status', roomStatus)
 
-      console.log(`user ${socket.id} disconnected from room:${roomId}`)
+      console.log(`user  leave from room:${roomId}`)
     })
   })
 }
