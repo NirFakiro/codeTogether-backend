@@ -15,7 +15,7 @@ const server = http.createServer(app)
 app.use(express.json())
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.resolve(__dirname, 'public', 'dist')))
+  app.use(express.static(path.resolve('public')))
 } else {
   const corsOptions = {
     origin: [
@@ -32,7 +32,7 @@ app.use('/api/code', coodeRoutes)
 
 app.get('/**', (req, res) => {
   console.log('GET request received')
-  res.sendFile(path.resolve(__dirname, 'public', 'dist', 'index.html'))
+  res.sendFile(path.resolve('public/index.html'))
 })
 
 setupSocketAPI(server)
