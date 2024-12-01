@@ -61,15 +61,17 @@ export function setupSocketAPI(http) {
       gIo.to(roomId).emit('room-status', roomStatus)
 
       //Update code
-      socket.on('code-update', (roomId, newCode) => {
-        const roomData = rooms.get(roomId)
-        roomData.currentCode = newCode
-        console.log('UpdateCode:', newCode)
+      socket.on('code-update', ({ roomId, updatedCode }) => {
+        const room = rooms.get(roomId)
+        if (!room) {
+          return
+        }
 
-        gIo.to(roomId).emit('code-changed', newCode)
+        room.currentCode = updatedCode
+        console.log('UpdateCode:', updatedCode)
+
+        gIo.to(roomId).emit('code-changed', updatedCode)
       })
-
-     
     })
 
     // User disconnect
