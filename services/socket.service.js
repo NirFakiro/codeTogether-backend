@@ -63,14 +63,12 @@ export function setupSocketAPI(http) {
       //Update code
       socket.on('code-update', ({ roomId, updatedCode }) => {
         const room = rooms.get(roomId)
-        if (!room) {
-          return
-        }
-
         room.currentCode = updatedCode
-        console.log('UpdateCode:', updatedCode)
-
         gIo.to(roomId).emit('code-changed', updatedCode)
+      })
+
+      socket.on('show-modal', ({ roomId, content }) => {
+        gIo.to(roomId).emit('show-modal', content)
       })
     })
 
@@ -86,6 +84,7 @@ export function setupSocketAPI(http) {
       // Update the role
       if (role === 'mentor') {
         gIo.to(roomId).emit('redirect-to-lobby')
+
         rooms.delete(roomId)
       } else if (role === 'student') {
         roomData.student = null
